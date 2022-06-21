@@ -30,7 +30,6 @@ pub struct LoginRequest {
 }
 
 pub async fn perform_login(payload: LoginRequest, app_data: AppData) -> ServiceResult<UserAuthentication> {
-    log::info!("email => '{}', password => '{}'", payload.email, payload.password);
     let user_fut = sqlx::query_as!(
         UserAuthentication,
         r#"
@@ -47,11 +46,6 @@ pub async fn perform_login(payload: LoginRequest, app_data: AppData) -> ServiceR
         Ok(user_authentication) => {
             let password_hash = hash_password(&payload.password, &user_authentication.salt);
             let hash_str = hex::encode(password_hash);
-            log::info!(
-                "password_hash = {}\npassword_usr  = {}",
-                hash_str,
-                user_authentication.password
-            );
             if user_authentication.password == hash_str {
                 return Ok(user_authentication);
             }
@@ -66,3 +60,14 @@ pub async fn perform_login(payload: LoginRequest, app_data: AppData) -> ServiceR
 }
 
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_hash_password() {
+        let hashed_pass = hash_password("password", "salt");
+        let hash_str = hex::encode(hashed_pass);
+        assert_eq!("fa6a2185b3e0a9a85ef41ffb67ef3c1fb6f74980f8ebf970e4e72e353ed9537d593083c201dfd6e43e1c8a7aac2bc8dbb119c7dfb7d4b8f131111395bd70e97f", hash_str)
+    }
+}
