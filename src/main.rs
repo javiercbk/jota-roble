@@ -1,13 +1,9 @@
-#[macro_use]
 extern crate log;
 
 use std::io;
 use std::sync::Arc;
 
-use actix_web::{
-    middleware as actix_middleware,
-    App, HttpServer,
-};
+use actix_web::{middleware as actix_middleware, App, HttpServer};
 use dotenv::dotenv;
 use std::env;
 
@@ -26,7 +22,6 @@ async fn main() -> io::Result<()> {
     dotenv().ok();
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
-
     let host = env::var("HOST").expect("Host not set");
     let port_str = env::var("PORT").expect("Port not set");
     let port = port_str.parse::<u16>().expect("port is not valid");
@@ -41,9 +36,8 @@ async fn main() -> io::Result<()> {
         App::new()
             .wrap(
                 actix_middleware::DefaultHeaders::new()
-                    .header("Permissions-Policy", "interest-cohort=()"),
+                    .add(("Permissions-Policy", "interest-cohort=()")),
             )
-            
             .wrap(actix_middleware::Compress::default())
             .app_data(data.clone())
             .wrap(actix_middleware::NormalizePath::new(

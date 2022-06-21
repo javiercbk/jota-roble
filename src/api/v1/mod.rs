@@ -3,5 +3,5 @@ pub mod auth;
 
 
 pub fn services(cfg: &mut ServiceConfig) {
-    auth::services(cfg);
+    auth::controller::services(cfg);
 }
