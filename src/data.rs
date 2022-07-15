@@ -11,10 +11,10 @@ pub struct Data {
 
 impl Data {
 
-    pub async fn new() -> Arc<Data> {
+    pub async fn new(database_url: &str) -> Arc<Data> {
         // connect to SQLite DB
 
-        let sqlite_connection_options = SqliteConnectOptions::from_str("sqlite:jota_roble.db").expect("error creating database")
+        let sqlite_connection_options = SqliteConnectOptions::from_str(database_url).expect("error creating database")
             .journal_mode(SqliteJournalMode::Wal)
             .busy_timeout(Duration::new(5, 0))
             .foreign_keys(true);

@@ -11,6 +11,7 @@ mod api;
 mod data;
 mod errors;
 mod routes;
+mod db;
 
 pub use crate::data::Data;
 pub use crate::routes::services;
@@ -27,8 +28,8 @@ async fn main() -> io::Result<()> {
     let port = port_str.parse::<u16>().expect("port is not valid");
     log::info!("starting HTTP server at http://{}:{}", host, port_str);
 
-    let data = Data::new().await;
-    sqlx::migrate!("./migrations/").run(&data.db).await.unwrap();
+    let data = Data::new("sqlite:jota_roble.db").await;
+    sqlx::migrate!("./db/migrations/").run(&data.db).await.unwrap();
     let data = actix_web::web::Data::new(data);
 
     // start HTTP server

@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS shows(
+    id INTEGER PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS shows_name_unique_idx ON shows (name);
